@@ -1,0 +1,2809 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảo Bối Cloud</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.3);
+            --option-bg: rgba(255, 255, 255, 0.6);
+            --option-hover: #e0e7ff;
+            --correct-bg: #d1fae5;
+            --correct-border: #10b981;
+            --wrong-bg: #fee2e2;
+            --wrong-border: #ef4444;
+            --progress-bg: #e5e7eb;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            --accent: #f59e0b;
+        }
+
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --primary-hover: #818cf8;
+            --bg-color: #111827;
+            --text-color: #f9fafb;
+            --card-bg: rgba(31, 41, 55, 0.85);
+            --card-border: rgba(255, 255, 255, 0.05);
+            --option-bg: rgba(55, 65, 81, 0.6);
+            --option-hover: #4b5563;
+            --correct-bg: rgba(16, 185, 129, 0.2);
+            --wrong-bg: rgba(239, 68, 68, 0.2);
+            --progress-bg: #374151;
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+        }
+
+        [data-theme="light"] body {
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,90%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,80%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,80%,1) 0, transparent 50%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: -webkit-linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Start Screen */
+        .settings-group {
+            margin-bottom: 25px;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            background: var(--option-bg);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        /* Quiz Screen */
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: var(--progress-bg);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        [data-theme="dark"] .quiz-header {
+            color: #9ca3af;
+        }
+
+        .timer {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+
+        .timer.warning {
+            color: var(--wrong-border);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            padding: 16px 20px;
+            border-radius: 12px;
+            background: var(--option-bg);
+            border: 2px solid transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.05rem;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            background: var(--option-hover);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .option.correct {
+            background: var(--correct-bg);
+            border-color: var(--correct-border);
+        }
+
+        .option.wrong {
+            background: var(--wrong-bg);
+            border-color: var(--wrong-border);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.05);
+            border-radius: 50%;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .option-letter {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Results Screen */
+        .results-summary {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 0%, var(--progress-bg) 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: var(--card-bg);
+            border-radius: 50%;
+        }
+
+        .score-text {
+            position: relative;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--option-bg);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-card.correct .stat-value { color: var(--correct-border); }
+        .stat-card.wrong .stat-value { color: var(--wrong-border); }
+        .stat-card.skipped .stat-value { color: #9ca3af; }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Review Mode */
+        .review-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .review-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .review-list::-webkit-scrollbar-track {
+            background: var(--progress-bg);
+            border-radius: 4px;
+        }
+        
+        .review-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .review-item {
+            background: var(--option-bg);
+            padding: 20px;
+            border-radius: 16px;
+            border-left: 4px solid var(--progress-bg);
+        }
+
+        .review-item.correct { border-left-color: var(--correct-border); }
+        .review-item.wrong { border-left-color: var(--wrong-border); }
+
+        .review-q {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .review-ans {
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .badge-correct { background: var(--correct-bg); color: var(--correct-border); }
+        .badge-wrong { background: var(--wrong-bg); color: var(--wrong-border); }
+
+        .list-item { background: var(--option-bg); padding: 20px; border-radius: 16px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
+        .list-question { font-weight: 600; margin-bottom: 10px; }
+        .list-answer { color: var(--correct-border); font-weight: 600; }
+        .search-bar { width: 100%; margin-bottom: 20px; padding: 12px; border-radius: 12px; border: 1px solid var(--card-border); background: var(--option-bg); color: var(--text-color); font-size: 1rem; outline: none; }
+
+        @media (max-width: 600px) {
+            .container { padding: 25px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .quiz-footer { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fa-solid fa-cloud"></i> Bảo Bối Cloud</h1>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Chuyển giao diện">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </div>
+
+        <!-- SCREEN 1: START -->
+        <div id="start-screen" class="screen active">
+            <h2 style="margin-bottom: 20px;">Cài đặt bài thi</h2>
+            
+            <div class="settings-group">
+                <label>Chế độ ôn tập</label>
+                <select id="setting-mode">
+                    <option value="practice" selected>Luyện tập (Hiển thị đáp án ngay)</option>
+                    <option value="test">Thi trắc nghiệm (Có tính giờ)</option>
+                </select>
+            </div>
+
+            <div class="settings-group">
+                <label>Số lượng câu hỏi</label>
+                <select id="setting-count">
+                    <option value="all">Tất cả (172 câu)</option>
+                    <option value="20">20 câu</option>
+                    <option value="40">40 câu</option>
+                    <option value="45">45 câu</option>
+                    <option value="50">50 câu</option>
+                </select>
+            </div>
+
+            <div class="settings-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="setting-random-q" checked>
+                    Xáo trộn thứ tự câu hỏi
+                </label>
+                <label class="checkbox-label" style="margin-top: 10px;">
+                    <input type="checkbox" id="setting-random-o" checked>
+                    Xáo trộn thứ tự đáp án
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 10px; flex-direction: column;">
+                <button class="btn" onclick="startQuiz()">
+                    <i class="fa-solid fa-play"></i> Bắt đầu làm bài
+                </button>
+                <button class="btn btn-outline" onclick="showReadMode()">
+                    <i class="fa-solid fa-book-open"></i> Đọc tài liệu
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: QUIZ -->
+        <div id="quiz-screen" class="screen">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div class="quiz-header">
+                <span id="question-tracker">Câu 1 / 20</span>
+                <span class="timer" id="timer" style="display: none;"><i class="fa-regular fa-clock"></i> 00:00</span>
+            </div>
+
+            <div class="question-text" id="question-text">
+                Nội dung câu hỏi sẽ hiển thị ở đây?
+            </div>
+
+            <div class="options" id="options-container">
+                <!-- Options injected via JS -->
+            </div>
+
+            <div class="quiz-footer">
+                <button class="btn btn-outline" id="btn-prev" onclick="prevQuestion()" style="display: none;">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </button>
+                <button class="btn btn-outline" id="btn-skip" onclick="nextQuestion()">
+                    Bỏ qua <i class="fa-solid fa-forward"></i>
+                </button>
+                <button class="btn" id="btn-next" onclick="nextQuestion()" style="display: none;">
+                    Tiếp theo <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button class="btn" id="btn-finish" onclick="finishQuiz()" style="display: none; background: #10b981;">
+                    Nộp bài <i class="fa-solid fa-check"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: RESULTS -->
+        <div id="results-screen" class="screen">
+            <h2 style="text-align: center; margin-bottom: 30px;">Kết quả bài thi</h2>
+            
+            <div class="results-summary">
+                <div class="score-circle" id="score-circle">
+                    <div class="score-text" id="score-text">0%</div>
+                </div>
+                <h3 id="score-msg" style="margin-bottom: 10px;">Hoàn thành xuất sắc!</h3>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card correct">
+                    <div class="stat-value" id="stat-correct">0</div>
+                    <div class="stat-label">Câu đúng</div>
+                </div>
+                <div class="stat-card wrong">
+                    <div class="stat-value" id="stat-wrong">0</div>
+                    <div class="stat-label">Câu sai</div>
+                </div>
+                <div class="stat-card skipped">
+                    <div class="stat-value" id="stat-skipped">0</div>
+                    <div class="stat-label">Bỏ qua</div>
+                </div>
+            </div>
+
+            <div class="quiz-footer">
+                <button class="btn btn-outline" onclick="showReview()">
+                    <i class="fa-solid fa-magnifying-glass"></i> Xem chi tiết
+                </button>
+                <button class="btn" onclick="location.reload()">
+                    <i class="fa-solid fa-rotate-right"></i> Thi lại
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: REVIEW -->
+        <div id="review-screen" class="screen">
+            <div class="header" style="margin-bottom: 20px;">
+                <h2>Chi tiết các câu</h2>
+                <button class="btn btn-outline" style="width: auto; padding: 8px 16px;" onclick="showResults()">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </button>
+            </div>
+            
+            <div class="review-list" id="review-list">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- SCREEN 5: READ MODE -->
+        <div id="read-screen" class="screen">
+            <div class="header" style="margin-bottom: 20px;">
+                <h2>Tài liệu ôn tập</h2>
+                <button class="btn btn-outline" style="width: auto; padding: 8px 16px;" onclick="switchScreen('start-screen')">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </button>
+            </div>
+            <input type="text" id="search-input" class="search-bar" placeholder="🔍 Tìm kiếm câu hỏi..." oninput="filterReadList()">
+            <div class="review-list" id="read-list">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Data injected from Python
+        const rawQuizData = [
+  {
+    "id": 1,
+    "question": "Kiến trúc SOA là kiến trúc gì?",
+    "options": [
+      "Kiến trúc hướng theo định hướng duy nhất",
+      "Kiến trúc đa tác vụ",
+      "Kiến trúc hướng dịch vụ",
+      "Kiến trúc hướng theo định hướng không duy nhất"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 2,
+    "question": "SOA viết tắt của cụm từ tiếng anh nào sau đây?",
+    "options": [
+      "Service Oriented Architecture",
+      "Service On Architecture",
+      "Service Of Architecture",
+      "Server Oriented Architecture"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 3,
+    "question": "Điện toán đám mây có thể được xem như là giai đoạn tự nhiên tiếp theo từ mô hình điện toán nào?",
+    "options": [
+      "Mô hình điện toán tự trị",
+      "Mô hình điện toán lưới",
+      "Mô hình điện toán theo nhu cầu",
+      "Mô hình điện toán lai ghép"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 4,
+    "question": "Dịch vụ IT truyền thống phải tự xây dựng bao nhiêu phần?",
+    "options": [
+      "Ứng dụng, dữ liệu",
+      "Thực thi, ứng dụng, dữ liệu",
+      "Nền tảng, thực thi",
+      "Nền tảng, thực thi, ứng dụng, dữ liệu"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 5,
+    "question": "Dịch vụ IaaS là viết tắt của cụm từ nào sau đây?",
+    "options": [
+      "Infra as a Service",
+      "Infrastructure as a Service",
+      "Infrasture as a Server",
+      "Infrasture as area Service"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 6,
+    "question": "Với mô hình dịch vụ IaaS, người sử dụng phải tự xây dựng cái gì?",
+    "options": [
+      "Thực thi, ứng dụng, dữ liệu",
+      "Nền tảng, thực thi, ứng dụng, dữ liệu",
+      "Ứng dụng, dữ liệu",
+      "Dữ liệu"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 7,
+    "question": "Dịch vụ PaaS là viết tắt của từ gì?",
+    "options": [
+      "Platform as a Service",
+      "Platform as a Server",
+      "Plat as a Service",
+      "Platform and a Server"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 8,
+    "question": "Với mô hình dịch vụ PaaS, người sử dụng phải tự xây dựng cái gì?",
+    "options": [
+      "Dữ liệu",
+      "Thực thi, ứng dụng, dữ liệu",
+      "Ứng dụng, dữ liệu",
+      "Nền tảng, thực thi, ứng dụng, dữ liệu"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 9,
+    "question": "Với mô hình dịch vụ SaaS, người sử dụng phải tự xây dựng cái gì?",
+    "options": [
+      "Dữ liệu",
+      "Ứng dụng, dữ liệu",
+      "Thực thi, ứng dụng, dữ liệu",
+      "Nền tảng, thực thi, ứng dụng, dữ liệu"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 10,
+    "question": "Dịch vụ SaaS là viết tắt của từ gì?",
+    "options": [
+      "Software as a Service",
+      "Software as a Server",
+      "Soft as a Service",
+      "Software and a Service"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 11,
+    "question": "Tiktok thuộc loại dịch vụ điện toán đám mây nào?",
+    "options": [
+      "IaaS",
+      "PaaS",
+      "SaaS",
+      "C2C"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 12,
+    "question": "Loại dịch vụ nào mà người sử dụng sau khi thuê xong còn phải xây dựng thêm các thành phần nhiều nhất?",
+    "options": [
+      "SaaS",
+      "PaaS",
+      "IaaS",
+      "B2B"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 13,
+    "question": "Loại dịch vụ nào mà người sử dụng có được môi trường để lập trình chương trình ứng dụng?",
+    "options": [
+      "IaaS",
+      "SaaS",
+      "PaaS",
+      "C2B"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 14,
+    "question": "Có bao nhiêu lớp thành phần trong điện toán đám mây?",
+    "options": [
+      "4",
+      "5",
+      "3",
+      "8"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 15,
+    "question": "Những loại dịch vụ nào khi thuê có Networking?",
+    "options": [
+      "SaaS",
+      "IaaS",
+      "PaaS",
+      "IaaS, PaaS, SaaS"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 16,
+    "question": "Những loại dịch vụ nào khi thuê có Storage?",
+    "options": [
+      "IaaS, PaaS, SaaS, Software as a Server",
+      "IaaS, PaaS, SaaS",
+      "Software as a Server",
+      "IaaS, PaaS"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 17,
+    "question": "Những loại dịch vụ nào khi thuê có Virtualization?",
+    "options": [
+      "IaaS, PaaS, SaaS, Standalone Server",
+      "IaaS, PaaS, SaaS",
+      "IaaS, PaaS",
+      "Software and a Service"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 18,
+    "question": "Những loại dịch vụ nào khi thuê có Server?",
+    "options": [
+      "IaaS, PaaS, Software as a Server",
+      "IaaS, PaaS, SaaS",
+      "IaaS, PaaS",
+      "Software as a Server"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 19,
+    "question": "Những loại dịch vụ nào khi thuê có Operating System?",
+    "options": [
+      "IaaS, PaaS",
+      "SaaS",
+      "PaaS, SaaS",
+      "PaaS"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 20,
+    "question": "Đâu không phải là ưu điểm của điện toán đám mây?",
+    "options": [
+      "Giảm chi phí",
+      "Dễ sử dụng, tiện lợi",
+      "Tận dụng tối đa tài nguyên",
+      "An toàn dữ liệu"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 21,
+    "question": "Đâu không phải là nhược điểm của điện toán đám mây?",
+    "options": [
+      "Tính riêng tư",
+      "Khả năng bảo mật",
+      "An toàn dữ liệu",
+      "Dễ sử dụng, tiện lợi"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 22,
+    "question": "Những loại dịch vụ nào khi thuê có Database?",
+    "options": [
+      "PaaS, SaaS",
+      "IaaS, PaaS",
+      "SaaS",
+      "PaaS"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 23,
+    "question": "Những loại dịch vụ nào khi thuê có Runtime?",
+    "options": [
+      "IaaS, PaaS",
+      "SaaS",
+      "PaaS",
+      "PaaS, SaaS"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 24,
+    "question": "Những loại dịch vụ nào khi thuê có Application?",
+    "options": [
+      "PaaS, SaaS",
+      "SaaS",
+      "IaaS, PaaS, SaaS",
+      "PaaS"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 25,
+    "question": "Trong hoạt động của điện toán đám mây, lớp Front-End để làm gì?",
+    "options": [
+      "Là lớp chứa hạ tầng thiết bị",
+      "Là lớp chứa giao diện người dùng của ứng dụng",
+      "Là lớp chứa toàn bộ các thành phần hoạt động",
+      "Là lớp truyền dẫn"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 26,
+    "question": "Trong hoạt động của điện toán đám mây, lớp Back-End để làm gì?",
+    "options": [
+      "Là lớp chứa hạ tầng thiết bị",
+      "Là lớp chứa giao diện người dùng của ứng dụng",
+      "Là lớp chứa toàn bộ các thành phần hoạt động",
+      "Là lớp truyền dẫn"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 27,
+    "question": "Google App Engine là dịch vụ thuộc loại gì?",
+    "options": [
+      "PaaS",
+      "IaaS",
+      "SaaS",
+      "AaaA"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 28,
+    "question": "Google Computer Engine là dịch vụ thuộc loại gì?",
+    "options": [
+      "PaaS",
+      "SaaS",
+      "MaaM",
+      "IaaS"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 29,
+    "question": "Đâu là nhược điểm của điện toán đám mây?",
+    "options": [
+      "Tính riêng tư, tính di động dữ liệu, mất dữ liệu, khả năng bảo mật, quyền sở hữu",
+      "Tính riêng tư, tính sẵn dùng, tính di động dữ liệu, mất dữ liệu, khả năng bảo mật, quyền sở hữu",
+      "Tính riêng tư, tính sẵn dùng, mất dữ liệu, khả năng bảo mật, quyền sở hữu",
+      "Tính riêng tư, tính sẵn dùng"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 30,
+    "question": "Có bao nhiêu mô hình điện toán đám mây được triển khai trong thực tế?",
+    "options": [
+      "6",
+      "4",
+      "7",
+      "10"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 31,
+    "question": "Gmail là ứng dụng thuộc loại dịch vụ gì?",
+    "options": [
+      "IaaS",
+      "PaaS",
+      "MaaS",
+      "SaaS"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 32,
+    "question": "Mô hình dịch vụ Service Category của loại IaaS gồm có những gì?",
+    "options": [
+      "VM rental, online storage",
+      "Application and software rental",
+      "SaaS",
+      "PaaS"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 33,
+    "question": "Mô hình dịch vụ Service Category của loại PaaS gồm có những gì?",
+    "options": [
+      "Online operating environment, online database, online message queues",
+      "VM rental, online storage",
+      "Application and software rental",
+      "SaaS"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 34,
+    "question": "Mô hình dịch vụ Service Category của loại SaaS gồm có những gì?",
+    "options": [
+      "Online operating environment, online database, online message queues",
+      "VM rental, online storage",
+      "Application and software rental",
+      "SaaS"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 35,
+    "question": "Mô hình dịch vụ Service Customization của loại IaaS gồm có những gì?",
+    "options": [
+      "Server template",
+      "VM rental, online storage",
+      "Application and software rental",
+      "SaaS"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 36,
+    "question": "Mô hình kiểu dịch vụ Service monitoring của loại PaaS gồm có những gì?",
+    "options": [
+      "Server template",
+      "VM rental, online storage",
+      "Application and software rental",
+      "Logic resource monitoring"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 37,
+    "question": "Mô hình dịch vụ Service monitoring của loại SaaS gồm có những gì?",
+    "options": [
+      "Server template",
+      "VM rental, online storage",
+      "Application monitoring",
+      "SaaS"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 38,
+    "question": "Kiểu dịch vụ Service Level Management của loại IaaS gồm có những gì?",
+    "options": [
+      "Dynamic orchestration of physical resources",
+      "Dynamic orchestration of application",
+      "Dynamic orchestration of logic resources",
+      "Multi-tenancy, network, storage"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 39,
+    "question": "Kiểu dịch vụ Service Level Management của loại SaaS gồm có những gì?",
+    "options": [
+      "Dynamic orchestration of physical resources",
+      "Dynamic orchestration of application",
+      "Dynamic orchestration of logic resources",
+      "Multi-tenancy, network, storage"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 40,
+    "question": "Kiểu dịch vụ Service Level Management của loại PaaS gồm có những gì?",
+    "options": [
+      "Dynamic orchestration of physical resources",
+      "Dynamic orchestration of application",
+      "Dynamic orchestration of logic resources",
+      "Multi-tenancy, network, storage"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 41,
+    "question": "Kiểu dịch vụ Service Optimization của loại IaaS gồm có những gì?",
+    "options": [
+      "Multi-tenancy",
+      "Network, storage, and server virtualization",
+      "Network",
+      "Multi-tenancy, network, storage"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 42,
+    "question": "Kiểu dịch vụ Service Optimization của loại PaaS gồm có những gì?",
+    "options": [
+      "Multi-tenancy",
+      "Network, storage, and server virtualization",
+      "Large-scale distributed file system, database, middleware",
+      "Multi-tenancy, network, storage"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 43,
+    "question": "Kiểu dịch vụ Service Optimization của loại SaaS gồm có những gì?",
+    "options": [
+      "Multi-tenancy",
+      "Network, storage, and server virtualization",
+      "Network",
+      "Multi-tenancy, network, storage"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 44,
+    "question": "Kiểu dịch vụ Service Optimization của loại IaaS gồm có những gì? (câu lặp lại)",
+    "options": [
+      "Multi-tenancy",
+      "Network, storage, and server virtualization",
+      "Network",
+      "Multi-tenancy, network, storage"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 45,
+    "question": "Kiểu dịch vụ Service Measurement của loại IaaS gồm có những gì?",
+    "options": [
+      "Physical resource metering",
+      "Network, storage, and server virtualization",
+      "Network",
+      "Multi-tenancy, network, storage"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 46,
+    "question": "Kiểu dịch vụ Service Measurement của loại PaaS gồm có những gì?",
+    "options": [
+      "Physical resource metering",
+      "Network, storage, and server virtualization",
+      "Logic resource usage metering",
+      "Multi-tenancy, network, storage"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 47,
+    "question": "Kiểu dịch vụ Service Measurement của loại SaaS gồm có những gì?",
+    "options": [
+      "Physical resource metering",
+      "Network, storage, and server virtualization",
+      "Network",
+      "Application usage metering"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 48,
+    "question": "Kiểu dịch vụ Service Integration and Combination của loại IaaS gồm có những gì?",
+    "options": [
+      "Load balance",
+      "SOA",
+      "SOA, mashup",
+      "Usage metering"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 49,
+    "question": "Kiểu dịch vụ Service Integration and Combination của loại PaaS gồm có những gì?",
+    "options": [
+      "Load balance",
+      "SOA",
+      "SOA, mashup",
+      "Usage metering"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 50,
+    "question": "Kiểu dịch vụ Service Integration and Combination của loại SaaS gồm có những gì?",
+    "options": [
+      "Load balance",
+      "SOA",
+      "SOA, mashup",
+      "Usage metering"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 51,
+    "question": "Kiểu dịch vụ Security của loại IaaS gồm có những gì?",
+    "options": [
+      "Load balance",
+      "Storage encryption and isolation, VM isolation, VLAN, SSL/SSH",
+      "Data isolation, operating environment isolation, SSL",
+      "Data isolation, operating environment isolation, SSL, Web authentication and authorization"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 52,
+    "question": "Kiểu dịch vụ Security của loại PaaS gồm có những gì?",
+    "options": [
+      "Load balance",
+      "Storage encryption and isolation, VM isolation, VLAN, SSL/SSH",
+      "Data isolation, operating environment isolation, SSL",
+      "Data isolation, operating environment isolation, SSL, Web authentication and authorization"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 53,
+    "question": "Kiểu dịch vụ Security của loại SaaS gồm có những gì?",
+    "options": [
+      "Load balance",
+      "Storage encryption and isolation, VM isolation, VLAN, SSL/SSH",
+      "Data isolation, operating environment isolation, SSL",
+      "Data isolation, operating environment isolation, SSL, Web authentication and authorization"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 54,
+    "question": "Hãng Viettel IDC nhà cung cấp các dịch vụ điện toán đám mây được thành lập vào năm nào?",
+    "options": [
+      "2008",
+      "2010",
+      "2009",
+      "2007"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 55,
+    "question": "Hãng IBM mở trung tâm điện toán đám mây tại thị trường Việt Nam vào năm nào?",
+    "options": [
+      "2008",
+      "2010",
+      "2009",
+      "2007"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 56,
+    "question": "Hội thảo hành trình tới công nghệ điện toán đám mây do Microsoft tổ chức vào ngày 2/3/2011 ở đâu?",
+    "options": [
+      "Hà Nội",
+      "Thành phố Hồ Chí Minh",
+      "Đà Nẵng",
+      "Quảng Ninh"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 57,
+    "question": "Doanh nghiệp công nghệ Việt Nam nào duy nhất tham gia sự kiện tại Nhật, ngày 26/2/2014, do tập đoàn Nikkei tổ chức?",
+    "options": [
+      "FPT",
+      "Viettel",
+      "VNPT",
+      "VNTT"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 58,
+    "question": "Năm 2008, hãng IBM đã có khách hàng đầu tiên tại Việt Nam là công ty nào?",
+    "options": [
+      "FPT",
+      "Viettel",
+      "VNPT",
+      "VNTT"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 59,
+    "question": "Phải tự xây dựng bao nhiêu phần trong mô hình dịch vụ IT truyền thống?",
+    "options": [
+      "4",
+      "6",
+      "8",
+      "9"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 60,
+    "question": "IaaS là từ viết tắt của?",
+    "options": [
+      "Infrasture as all Service",
+      "Infrastructure as a Service",
+      "Infrasture an a Service",
+      "Infrasture as all Server"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 61,
+    "question": "Người sử dụng phải tự xây dựng mấy phần nếu thuê dịch vụ IaaS?",
+    "options": [
+      "4",
+      "3",
+      "5",
+      "6"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 62,
+    "question": "Người sử dụng phải tự xây dựng mấy phần nếu thuê dịch vụ PaaS?",
+    "options": [
+      "4",
+      "3",
+      "5",
+      "2"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 63,
+    "question": "Người sử dụng phải tự xây dựng mấy phần nếu thuê dịch vụ SaaS?",
+    "options": [
+      "4",
+      "3",
+      "1",
+      "6"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 64,
+    "question": "Đám mây Hybrid (lai) là gì?",
+    "options": [
+      "Là mô hình trong đó hạ tầng đám mây được sở hữu bởi một tổ chức và phục vụ",
+      "Là mô hình hạ tầng đám mây được một tổ chức sở hữu và cung cấp dịch vụ rộng cho tất cả các khách hàng thông qua hạ tầng mạng Internet hoặc mạng công cộng diện rộng",
+      "Là một hình bao gồm hai hoặc nhiều hơn các đám mây tích hợp chia sẻ hạ tầng với nhau",
+      "Là mô hình bao gồm hai hoặc nhiều hơn các đám mây (đám mây riêng và đám mây công cộng) tích hợp với nhau cho phép chia sẻ hạ tầng hoặc đáp ứng nhu cầu trao đổi dữ liệu"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 65,
+    "question": "Các đám mây lai hầu hết thường được sử dụng làm?",
+    "options": [
+      "Một đối tác, nơi các ứng dụng lưu trữ trong đám mây và các ứng dụng quan trọng vẫn còn trên trang Web",
+      "Một nơi thí nghiệm, nơi đám mây được sử dụng với vùng làm việc tạm thời",
+      "Khả năng bổ sung hay khả năng bùng nổ, nơi đám mây được sử dụng cho các đột biến bất ngờ",
+      "Tất cả các đáp án trên"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 66,
+    "question": "Đâu không phải là lợi ích khi triển khai đám mây lai?",
+    "options": [
+      "Hỗ trợ khả năng kiểm soát dữ liệu đa dạng, tăng tốc độ truy cập giữa hệ thống và các ứng dụng",
+      "Tăng tính an ninh, bảo mật cho đám mây riêng",
+      "Hỗ trợ xử lý cao điểm - nhiều thời điểm khi khả năng xử lý của đám mây nội bộ không thể đáp ứng được nhu cầu trong doanh nghiệp",
+      "Tăng khả năng mở rộng mà không cần nâng cấp cơ sở hạ tầng"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 67,
+    "question": "Đâu là lợi ích của đám mây lai?",
+    "options": [
+      "Doanh nghiệp có thể cắt giảm khả năng lưu trữ nội bộ bởi vì có thể di chuyển tất cả các dữ liệu không cần thiết lên đám mây bên ngoài và chỉ lưu trữ tại chỗ dữ liệu quan trọng nhất",
+      "Hỗ trợ khả năng kiểm soát dữ liệu đa dạng, tăng tốc độ truy cập giữa hệ thống và các ứng dụng",
+      "Đám mây lai hỗ trợ xử lý cao điểm - nhiều thời điểm khi khả năng xử lý của đám mây nội bộ không thể đáp ứng",
+      "Tất cả các ý"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 68,
+    "question": "Các vấn đề liên quan đến bảo mật trên đám mây lai?",
+    "options": [
+      "Không kiểm soát trên dữ liệu, bảo mật và bảo trì được giao phó cho nhà cung cấp dịch vụ",
+      "Không biết các vị trí vật lý của dữ liệu",
+      "Không trực tiếp kiểm soát về sao lưu, tăng nguy cơ mất dữ liệu",
+      "Tất cả các ý"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 69,
+    "question": "Các dịch vụ từ đám mây công cộng nào có thể kết hợp đưa vào đám mây lai?",
+    "options": [
+      "Amazon",
+      "Google",
+      "Microsoft",
+      "Tất cả các ý trên"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 70,
+    "question": "Các bước tạo máy chủ ảo Google Engine thứ tự như thế nào?",
+    "options": [
+      "VM instances / Computer engine / new instances / config VM",
+      "Computer engine / VM instances / new instances / config VM",
+      "Config VM / Computer engine / VM instances / new instances",
+      "Computer engine / VM instances / config VM / new instances"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 71,
+    "question": "Điện toán máy tính chủ ảo gồm mấy thành phần?",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 72,
+    "question": "Thứ tự đúng của mô hình điện toán máy chủ ảo?",
+    "options": [
+      "Client – Application – Platform – Infrastructure – Server",
+      "Client – Application – Infrastructure – Server – Platform",
+      "Client – Platform – Application – Infrastructure – Server",
+      "Client – Infrastructure – Platform – Application – Server"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 73,
+    "question": "Điện toán máy chủ ảo hoạt động gồm có mấy lớp?",
+    "options": [
+      "5 lớp",
+      "4 lớp",
+      "3 lớp",
+      "2 lớp"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 74,
+    "question": "Mô hình dịch vụ trong kiến trúc của điện toán đám mây là gì?",
+    "options": [
+      "Software-as-a-Service",
+      "Platform-as-a-Service",
+      "Infrastructure-as-a-Service",
+      "Cả 3 mô hình dịch vụ"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 75,
+    "question": "Có mấy mô hình triển khai của điện toán đám mây trong thực tế?",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 76,
+    "question": "Phát biểu nào sai về đám mây công cộng?",
+    "options": [
+      "Là mô hình các dịch vụ đám mây được bên thứ ba cung cấp",
+      "Các đám mây tồn tại ngoài tường lửa của công ty và tổ chức sử dụng",
+      "Các đám mây được lưu trữ đầy đủ và được nhà cung cấp đám mây quản lý",
+      "Đám mây tồn tại bên trong tường lửa của các tổ chức và được các tổ chức quản lý trực tiếp"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 77,
+    "question": "Đám mây công cộng cung cấp những dịch vụ nào?",
+    "options": [
+      "Infrastructure-as-a-Service",
+      "Infrastructure-as-a-Service và Software-as-a-Service",
+      "Platform-as-a-Service và Software-as-a-Service",
+      "Infrastructure-as-a-Service, Platform-as-a-Service và Software-as-a-Service"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 78,
+    "question": "Khi sử dụng đám mây công cộng khách hàng phải trả những chi phí nào?",
+    "options": [
+      "Chi phí về quản lý phần cứng",
+      "Chi phí về phần mềm dịch vụ",
+      "Chi phí về bảo trì hệ thống",
+      "Chi phí cho các tài nguyên sử dụng"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 79,
+    "question": "Phát biểu nào đúng về đám mây riêng?",
+    "options": [
+      "Đám mây tồn tại bên trong tường lửa của các tổ chức và được tổ chức quản lý trực tiếp",
+      "Là mô hình các dịch vụ đám mây được bên thứ ba cung cấp",
+      "Các đám mây tồn tại ngoài tường lửa của công ty và tổ chức sử dụng",
+      "Các đám mây được lưu trữ đầy đủ và được nhà cung cấp đám mây quản lý"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 80,
+    "question": "Public Clouds là gì?",
+    "options": [
+      "Là đám mây được chia sẻ bởi một số tổ chức và hỗ trợ một cộng đồng cụ thể có mối quan tâm chung",
+      "Là đám mây công cộng cố gắng cung cấp cho người tiêu dùng các phần tử công nghệ thông tin tốt nhất",
+      "Là đám mây được quản lý bởi các công ty lớn chuyên cung cấp các dịch vụ cho cộng đồng",
+      "Là đám mây được cung cấp bên trong của một tổ chức xã hội"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 81,
+    "question": "Khi nào thì lựa chọn dịch vụ đám mây công cộng (public cloud)?",
+    "options": [
+      "Người dùng có các ứng dụng Infrastructure-as-a-Service từ một nhà cung cấp có chiến lược an ninh thực hiện tốt",
+      "Người dùng có các ứng dụng Platform-as-a-Service từ một nhà cung cấp có chiến lược an ninh thực hiện tốt",
+      "Người dùng có các ứng dụng Software-as-a-Service từ một nhà cung cấp có chiến lược an ninh thực hiện tốt",
+      "Để tiết kiệm chi phí"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 82,
+    "question": "Doanh nghiệp triển khai đám mây riêng gặp những khó khăn gì?",
+    "options": [
+      "Chi phí của việc thiết lập đám mây bên trong có thể có chiều hướng ngăn cản việc sử dụng",
+      "Chi phí hoạt động liên tục của đám mây có thể vượt chi phí sử dụng một đám mây chung",
+      "Trách nhiệm thiết lập và bảo trì đám mây",
+      "Cả 3 đáp án trên"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 83,
+    "question": "Mô hình đám mây có lợi thế gì so với đám mây chung?",
+    "options": [
+      "Đám mây được lưu trữ đầy đủ và được bảo quản chặt chẽ",
+      "Phân bố tài khoản workload cho các ứng dụng được sử dụng bởi nhiều người",
+      "Có thể phục vụ tốt các quy trình nghiệp vụ tới hạn, an toàn như các khoản thanh toán của khách, xử lý bảng lương của nhân viên",
+      "Kiểm soát chi tiết hơn trên các tài nguyên khác nhau đang tạo thành một đám mây mang lại cho tất cả tùy chọn cấu hình có sẵn"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 84,
+    "question": "Mô hình đám mây nào được thích hợp với doanh nghiệp?",
+    "options": [
+      "Đám mây công cộng",
+      "Đám mây riêng",
+      "Đám mây lai",
+      "Không có đáp án nào đúng"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 85,
+    "question": "Tổ chức hỗ trợ cộng đồng phù hợp với việc triển khai mô hình đám mây nào?",
+    "options": [
+      "Private cloud",
+      "Community cloud",
+      "Public cloud",
+      "Hybrid cloud"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 86,
+    "question": "Dịch vụ đám mây Google Computer Engine và Cloud SDK để thao tác với loại dịch vụ nào?",
+    "options": [
+      "Software-as-a-Service",
+      "Platform-as-a-Service",
+      "Infrastructure-as-a-Service",
+      "Không có đáp án đúng"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 87,
+    "question": "Google App Engine được sử dụng để thao tác triển khai loại dịch vụ nào trong điện toán đám mây?",
+    "options": [
+      "Software-as-a-Service",
+      "Platform-as-a-Service",
+      "Infrastructure-as-a-Service",
+      "Infrastructure-as-a-Server"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 88,
+    "question": "Sử dụng Google App Engine và App Engine PHP SDK để chạy website hỗ trợ ngôn ngữ và cơ sở dữ liệu nào?",
+    "options": [
+      "PHP và SQL",
+      "ASP và Access",
+      "Java và Oracle",
+      "PHP và MySQL"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 89,
+    "question": "App Engine PHP SDK của hãng nào?",
+    "options": [
+      "IBM",
+      "Amazon",
+      "Oracle",
+      "Google"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 90,
+    "question": "EC2 là nền tảng cơ sở hạ tầng điện toán đám mây do hãng nào cung cấp?",
+    "options": [
+      "Amazon",
+      "Microsoft",
+      "IBM",
+      "Google"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 91,
+    "question": "Dịch vụ nào Google cung cấp miễn phí?",
+    "options": [
+      "Cloud SQL",
+      "Google Drive",
+      "Preview Cloud Datastore",
+      "Compute Engine"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 92,
+    "question": "Dịch vụ EC2 của Amazon ra mắt lần đầu vào năm nào?",
+    "options": [
+      "2006",
+      "2007",
+      "2008",
+      "2009"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 93,
+    "question": "VPS là gì?",
+    "options": [
+      "Virtual Pet Site",
+      "Video Programming System",
+      "Vietnamese Professionals Society",
+      "Virtual Private Server"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 94,
+    "question": "Đâu là ưu điểm của điện toán đám mây, chọn đáp án đúng nhất?",
+    "options": [
+      "Tính linh động, giảm chi phí, tạo nên sự độc lập, tăng cường độ tin cậy, bảo mật, bảo trì dễ dàng, miễn phí",
+      "Tính linh động, giảm chi phí, tạo nên sự độc lập, tăng cường độ tin cậy, bảo mật, bảo trì dễ dàng",
+      "Tính linh động, giảm chi phí, tăng cường độ tin cậy, bảo mật, bảo trì dễ dàng",
+      "Tính linh động, giảm chi phí, tạo nên sự độc lập, tăng cường bảo mật, bảo trì dễ dàng, miễn phí"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 95,
+    "question": "Trong các phương án sau, đâu là đặc trưng của điện toán đám mây?",
+    "options": [
+      "Theo yêu cầu tự phục vụ (On-demand self-service)",
+      "Truy cập mạng diện rộng (Broad network access)",
+      "Dịch vụ đo được (Measured service)",
+      "Tất cả đều đúng"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 96,
+    "question": "Web 2.0 là thuật ngữ dùng để mô tả?",
+    "options": [
+      "Các trang web và các ứng dụng cho phép người dùng đã tạo ra",
+      "Các trang web và các ứng dụng cho phép người dùng xem và chia sẻ thông tin trực tuyến",
+      "Các trang web và các ứng dụng cho phép người dùng xem các thông tin hay tài liệu trực tuyến",
+      "Các trang web và các ứng dụng cho phép truyền tải thông tin tới người dùng"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 97,
+    "question": "Một trong những khác biệt lớn nhất giữa Web 2.0 và Web 1.0 là gì?",
+    "options": [
+      "Sự cộng tác nhiều hơn giữa người sử dụng Internet, các nhà cung cấp nội dung và các doanh nghiệp",
+      "Tốc độ truy cập cao hơn",
+      "Giao diện trang web đẹp hơn, dễ tùy chỉnh hơn",
+      "Tốc độ truy cập chậm hơn"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 98,
+    "question": "Hypervisor là gì?",
+    "options": [
+      "Là 1 ứng dụng phần mềm chịu trách nhiệm chạy nhiều máy ảo trên 1 hệ thống. Nó chịu trách nhiệm tạo, duy trì, truy cập hệ thống",
+      "Là 1 ứng dụng phần mềm chịu trách nhiệm chạy nhiều máy ảo trên nhiều hệ thống. Nó chịu trách nhiệm tạo, duy trì, truy cập hệ thống",
+      "Là 1 ứng dụng phần mềm chịu trách nhiệm chạy 1 máy ảo trên 1 hệ thống. Nó chịu trách nhiệm tạo, duy trì, truy cập hệ thống",
+      "Là 1 ứng dụng phần mềm chịu trách nhiệm tạo, duy trì, truy cập hệ thống"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 99,
+    "question": "Hypervisor không hoạt động ở đâu?",
+    "options": [
+      "Trên hệ điều hành",
+      "Bên dưới hệ điều hành và trực tiếp tương tác với tài nguyên phần cứng",
+      "Trên phần cứng",
+      "Trên phần mạng"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 100,
+    "question": "Các hình thức ảo hóa máy chủ bao gồm?",
+    "options": [
+      "Host-based",
+      "Hypervisor-based",
+      "Server-based",
+      "Host-based và Hypervisor-based"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 101,
+    "question": "Mô hình hosted-based được chia làm những lớp nào?",
+    "options": [
+      "Nền tảng phần cứng – Hệ điều hành Host – Máy ảo và các ứng dụng chạy trên nó",
+      "Hệ điều hành Host – Máy ảo và các ứng dụng chạy trên nó",
+      "Nền tảng phần cứng – Máy ảo và các ứng dụng chạy trên nó",
+      "Nền tảng phần cứng – Hệ điều hành Host – Hệ thống virtual machine monitor (hypervisor) – Máy ảo và các ứng dụng chạy trên nó"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 102,
+    "question": "Nền tảng Bare-metal hypervisor bao gồm những lớp chính nào?",
+    "options": [
+      "Nền tảng ảo hóa virtual machine monitor (hypervisor) – Máy ảo và các ứng dụng của nó",
+      "Nền tảng phần cứng – Máy ảo và các ứng dụng của nó",
+      "Nền tảng phần cứng – Nền tảng ảo hoá Virtual machine monitor (hypervisor) – Máy ảo và các ứng dụng chạy trên nó",
+      "Nền tảng phần cứng – Hệ điều hành Host – Nền tảng ảo hoá virtual machine monitor (hypervisor) – Máy ảo và các ứng dụng chạy trên nó"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 103,
+    "question": "Đâu là thứ tự sắp xếp đúng của các lớp trong bộ vi xử lý ảo hóa theo thứ tự quyền từ thấp nhất tới cao nhất (từ lớp 3 đến lớp 0)?",
+    "options": [
+      "Hệ điều hành – Máy ảo – Các phần mềm ảo hóa – Tài nguyên vật lý",
+      "Các phần mềm ảo hóa – Tài nguyên vật lý – Hệ điều hành – Máy ảo",
+      "Máy ảo – Các phần mềm ảo hóa – Tài nguyên vật lý – Hệ điều hành",
+      "Tài nguyên vật lý – Các phần mềm ảo hóa – Máy ảo – Hệ điều hành"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 104,
+    "question": "Sản phẩm VMware Inc nào cung cấp giải pháp ảo hóa - điện toán đám mây?",
+    "options": [
+      "VMware vSphere",
+      "VMware vCloud Director",
+      "VMware vSphere, VMware vCloud Director, VMware vCloud Suite",
+      "VMware vCloud Suite"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 105,
+    "question": "Giải pháp VMware vCloud Suite bao gồm những phần mềm nào?",
+    "options": [
+      "VMware vSphere",
+      "VMware vCloud Director",
+      "VMware vCloud Networking and Security và vCenter Site Recovery Manager",
+      "Tất cả các ý"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 106,
+    "question": "VMware vSphere là phần mềm gì?",
+    "options": [
+      "Chương trình ảo hóa dành cho desktop",
+      "Chương trình ảo hóa dành cho máy chủ, máy trạm",
+      "Quản lý hạ tầng mạng trong điện toán đám mây",
+      "Hỗ trợ ảo hóa cho phép xây dựng hạ tầng điện toán đám mây"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 107,
+    "question": "Đâu là tính năng không thuộc thành phần VMware vSphere?",
+    "options": [
+      "VMware Director",
+      "Network Health Check",
+      "Configuration Backup & Restore",
+      "Roll-back và Recovery"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 108,
+    "question": "VMware vSphere phiên bản 5.5 hỗ trợ cấu hình đến mức nào cho mỗi host?",
+    "options": [
+      "320 CPU và 4TB RAM",
+      "160 CPU và 2TB RAM",
+      "8 CPU và 1TB RAM",
+      "32 CPU và 3TB RAM"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 109,
+    "question": "Chức năng Storage DRS trong vSphere để làm gì?",
+    "options": [
+      "Thiết lập lưu trữ trong ảo hóa",
+      "Bảo vệ dữ liệu, backup và restore các máy ảo",
+      "Cho phép tạo, cấu hình các vùng bảo mật",
+      "Tự động cân bằng tải trên storage"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 110,
+    "question": "Distributed Resource Scheduler & Distributed Power Manager trong vSphere để làm gì?",
+    "options": [
+      "Tự động cân bằng tải trên storage",
+      "Quản lý tập trung và theo dõi các kết nối mạng",
+      "Tạo các máy ảo thông qua các template",
+      "Quản lý tập trung tài nguyên các server(host) thành một khối và tự động cân bằng tải"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 111,
+    "question": "vMotion trong vSphere để làm gì?",
+    "options": [
+      "Di chuyển động các máy ảo sang các phân vùng storage khác mà không có downtime",
+      "Mở rộng tài nguyên CPU, RAM của host mà không cần có downtime",
+      "Đảm bảo tính liên tục của công việc khi một hệ thống có lỗi",
+      "Di chuyển nhanh chóng các máy ảo sang một hệ thống khác mà không có downtime"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 112,
+    "question": "Storage vMotion trong vSphere để làm gì?",
+    "options": [
+      "Di chuyển động các máy ảo sang các phân vùng storage khác mà không có downtime",
+      "Mở rộng tài nguyên CPU, RAM của host mà không cần có downtime",
+      "Đảm bảo tính liên tục của công việc khi một hệ thống có lỗi",
+      "Di chuyển nhanh chóng các máy ảo sang một hệ thống khác mà không có downtime"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 113,
+    "question": "Hot Add trong vSphere để làm gì?",
+    "options": [
+      "Tạo các máy ảo thông qua template",
+      "Đảm bảo tính liên tục của công việc khi một hệ thống có lỗi",
+      "Cho phép mở rộng tài nguyên CPU, RAM của host mà không cần có downtime",
+      "Di chuyển nhanh chóng các máy ảo sang hệ thống khác mà không có downtime"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 114,
+    "question": "Chức năng của VMware vCloud Director là gì?",
+    "options": [
+      "Ảo hóa các máy chủ",
+      "Ảo hóa hệ thống mạng",
+      "Quản lý mạng ảo",
+      "Quản lý tài nguyên vật lý để tạo thành những data centers ảo"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 115,
+    "question": "VMware vCloud Director cung cấp khả năng quản lí tài nguyên ảo qua giao diện nào?",
+    "options": [
+      "Giao diện web",
+      "Giao diện trên Windows",
+      "Giao diện trên Linux",
+      "Giao diện thiết bị chuyên dụng"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 116,
+    "question": "Chức năng của VMware vCloud Networking and Security là gì?",
+    "options": [
+      "Sao lưu và phục hồi cấu hình đám mây",
+      "Khôi phục thảm họa trên đám mây",
+      "Phân bố tài nguyên đám mây",
+      "Tạo ra các dịch vụ và mạng ảo độc lập với phần cứng mạng vật lý"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 117,
+    "question": "Chức năng của vCenter Site Recovery Manager là gì?",
+    "options": [
+      "Khôi phục và phục hồi trạng thái trước khi cài đặt",
+      "Cho phép tạo ra các dịch vụ mạng ảo",
+      "Tự động cập nhật các bản mới cho VMware vCloud Suite",
+      "Tự động hóa khôi phục thảm họa cho các ứng dụng trên đám mây"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 118,
+    "question": "Windows Azure Platform là gì?",
+    "options": [
+      "Một hệ điều hành cho máy tính",
+      "Hệ điều hành Windows cho máy chủ đám mây",
+      "Phần mềm quản lý đám mây ảo",
+      "Nhóm các công nghệ điện toán đám mây cung cấp một tập hợp các dịch vụ đặc trưng để phát triển ứng dụng"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 119,
+    "question": "Các thành phần chính trong Windows Azure Platform gồm:",
+    "options": [
+      "Windows Azure, SQL Azure, Windows Azure Platform Appfabric",
+      "Windows Server 2008, SQL Azure, Windows Azure Platform Appfabric",
+      "Windows Server 2008, SQL Azure, Apache",
+      "Windows Azure Platform Appfabric"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 120,
+    "question": "Windows Azure là gì?",
+    "options": [
+      "Là hệ điều hành máy chủ mới của Microsoft",
+      "Là một hệ điều hành dùng để chạy các ứng dụng Windows và lưu dữ liệu của nó trên đám mây",
+      "Là một phần mềm hỗ trợ cho Windows Server",
+      "Là hệ điều hành chạy trên các máy ảo trên đám mây"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 121,
+    "question": "Thành phần không phải của Windows Azure bao gồm:",
+    "options": [
+      "Computer Service",
+      "Network Service",
+      "Storage Service",
+      "Windows Azure Fabric"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 122,
+    "question": "SQL Azure là gì?",
+    "options": [
+      "Là một phần của Microsoft SQL Server",
+      "Là dịch vụ cơ sở dữ liệu quan hệ của Microsoft trên đám mây",
+      "Là dịch vụ cơ sở dữ liệu quan hệ của Microsoft trên máy chủ ảo",
+      "Là dịch vụ cơ sở dữ liệu quan hệ trên máy chủ"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 123,
+    "question": "SQL Azure dựa vào cơ cấu cơ sở dữ liệu quan hệ nào sau đây?",
+    "options": [
+      "MySQL",
+      "Oracle",
+      "Microsoft SQL Server",
+      "DB2"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 124,
+    "question": "Bộ dịch vụ lưu trữ trong Windows Azure gồm thành phần nào?",
+    "options": [
+      "SQL, Table, Queue, Sheet",
+      "Blob, Table, Queue",
+      "Blob, Table, Sheet",
+      "Table, SQL Azure"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 125,
+    "question": "Đâu không phải là kịch bản để ứng dụng Windows Azure?",
+    "options": [
+      "Tạo một ứng dụng web có khả năng mở rộng",
+      "Tạo một ứng dụng xử lý song song",
+      "Tạo một ứng dụng web với dữ liệu quan hệ",
+      "Tạo nhiều mạng ảo giữa các máy tính trong mạng"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 126,
+    "question": "Các máy chủ ảo do Windows Azure tạo ra có thể chạy được các hệ điều hành nào sau đây?",
+    "options": [
+      "Windows Server 2008 R2",
+      "Windows Server 8",
+      "Linux",
+      "Windows Server 2008 R2, Windows Server 8, Linux"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 127,
+    "question": "Tính năng chính của Hyper-V là gì?",
+    "options": [
+      "Hỗ trợ ảo hóa và điện toán đám mây",
+      "Hỗ trợ kết nối nhiều server với nhau",
+      "Xây dựng hệ quản trị cơ sở dữ liệu trên đám mây",
+      "Tăng cường, cải thiện hiệu suất của máy ảo và cung cấp một nền tảng ảo hóa có khả năng mở rộng cho các triển khai điện toán đám mây IBM Cloud và Google Cloud"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 128,
+    "question": "Smartphone Enterprise là giải pháp đám mây do công ty nào phát triển?",
+    "options": [
+      "Microsoft",
+      "Oracle",
+      "VMware",
+      "IBM"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 129,
+    "question": "Smartcloud Enterprise được phát triển theo mô hình nào?",
+    "options": [
+      "IaaS",
+      "PaaS",
+      "SaaS",
+      "Tất cả các mô hình"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 130,
+    "question": "Đám mây Smartcloud Enterprise làm việc với các hệ điều hành nào?",
+    "options": [
+      "Windows, Linux",
+      "Windows, Mac OS",
+      "Linux, Windows, Ubuntu, Mac OS",
+      "Linux, Windows, MS-DOS, Android"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 131,
+    "question": "Dịch vụ điện toán đám mây Google cung cấp gồm những gì?",
+    "options": [
+      "Google Apps",
+      "Google App Engine",
+      "Google Compute Engine",
+      "Google Apps, Google App Engine, Google Compute Engine"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 132,
+    "question": "Google Compute Engine là giải pháp gì?",
+    "options": [
+      "Giải pháp triển khai đám mây riêng cho doanh nghiệp",
+      "Giải pháp ảo hóa cho máy chủ vật lý cá nhân",
+      "Giải pháp cung cấp nền tảng để phát triển ứng dụng trên đám mây",
+      "Giải pháp máy chủ ảo trên đám mây của Google cho các cá nhân và doanh nghiệp"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 133,
+    "question": "Các máy chủ trong Google Compute Engine hỗ trợ những hệ điều hành nào?",
+    "options": [
+      "Windows Azure, Linux, Red Hat",
+      "Hỗ trợ mọi phiên bản Windows, Linux, Red Hat, CentOS",
+      "Windows Server, Linux, Red Hat, CentOS",
+      "Hỗ trợ tất cả mọi bản Linux bao gồm cả Red Hat Enterprise, FreeBSD, Debian, CentOS"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 134,
+    "question": "Thuật ngữ \"cloud computing\" ra đời năm nào?",
+    "options": [
+      "Năm 2006",
+      "Năm 2007",
+      "Năm 2008",
+      "Năm 2009"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 135,
+    "question": "Đâu không phải là ưu điểm của điện toán đám mây?",
+    "options": [
+      "Giảm chi phí",
+      "Dễ sử dụng, tiện lợi",
+      "Tận dụng tối đa tài nguyên",
+      "An toàn dữ liệu"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 136,
+    "question": "Đâu không phải là nhược điểm của điện toán đám mây?",
+    "options": [
+      "Tính riêng tư",
+      "Khả năng bảo mật",
+      "An toàn dữ liệu",
+      "Dễ sử dụng, tiện lợi"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 137,
+    "question": "Đám mây nào sau đây có tính bảo mật cao nhất?",
+    "options": [
+      "Private Cloud",
+      "Public Cloud",
+      "Hybrid Cloud",
+      "Community Cloud"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 138,
+    "question": "Các doanh nghiệp vừa và nhỏ muốn tận dụng cả hiệu quả chi phí và bảo mật dữ liệu mạnh mẽ, kiểm soát và quyền riêng tư nên chọn mô hình nào?",
+    "options": [
+      "Private Cloud",
+      "Public Cloud",
+      "Hybrid Cloud",
+      "Community Cloud"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 139,
+    "question": "Đâu là mô hình trả tiền cho mỗi lần sử dụng, là một cơ sở hạ tầng đám mây với tất cả các dịch vụ có sẵn qua web?",
+    "options": [
+      "Private Cloud",
+      "Public Cloud",
+      "Hybrid Cloud",
+      "Community Cloud"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 140,
+    "question": "Đâu là đám mây mà trong đó hạ tầng đám mây được sử dụng bởi một số tổ chức cộng đồng người dùng?",
+    "options": [
+      "Private Cloud",
+      "Public Cloud",
+      "Hybrid Cloud",
+      "Community Cloud"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 141,
+    "question": "Mô hình hệ thống máy chủ trường ĐHĐL thuộc mô hình đám mây nào?",
+    "options": [
+      "Private Cloud",
+      "Public Cloud",
+      "Hybrid Cloud",
+      "Community Cloud"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 142,
+    "question": "Tên của tổ chức giúp thúc đẩy các tiêu chuẩn bảo mật cho điện toán đám mây là gì?",
+    "options": [
+      "Nhóm làm việc về tiêu chuẩn bảo mật đám mây",
+      "Liên minh bảo mật đám mây",
+      "Cơ quan giám sát bảo mật đám mây",
+      "Bảo mật trong Liên minh đám mây"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 143,
+    "question": "Virtual Machine Ware (VMware) là một ví dụ về...",
+    "options": [
+      "Dịch vụ cơ sở hạ tầng",
+      "Dịch vụ nền tảng",
+      "Dịch vụ phần mềm",
+      "Dịch vụ khác"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 144,
+    "question": "Thuật ngữ 'Cloud' trong điện toán đám mây dùng để chỉ:",
+    "options": [
+      "Internet",
+      "Mây tích",
+      "Một máy chủ",
+      "Dịch vụ cung cấp máy chủ"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 145,
+    "question": "Điều nào sau đây là đúng với điện toán đám mây?",
+    "options": [
+      "Nó sẽ luôn rẻ hơn và an toàn hơn so với máy tính cục bộ",
+      "Bạn có thể truy cập dữ liệu của mình từ bất kỳ máy tính nào trên thế giới, miễn là bạn có kết nối Internet",
+      "Chỉ có một vài công ty nhỏ đang đầu tư vào công nghệ, làm cho nó trở thành một công việc mạo hiểm",
+      "Bạn có thể truy cập dữ liệu của mình từ bất kỳ máy tính nào trên thế giới"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 146,
+    "question": "Đâu là một kiến trúc đám mây được duy trì trong một trung tâm dữ liệu doanh nghiệp?",
+    "options": [
+      "Public Cloud",
+      "Private Cloud",
+      "Company cloud",
+      "Hybrid Cloud"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 147,
+    "question": "Công ty nào trong số này không phải là công ty hàng đầu về điện toán đám mây?",
+    "options": [
+      "Google",
+      "Amazon",
+      "FPT",
+      "Microsoft"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 148,
+    "question": "Khi nào thì bạn không cần sử dụng đến điện toán đám mây?",
+    "options": [
+      "Chi phí và lợi nhuận",
+      "Tốc độ truyền tải",
+      "Dung lượng sử dụng",
+      "Tính toàn vẹn của dữ liệu"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 149,
+    "question": "Đâu không phải là kiến trúc của CloudSim?",
+    "options": [
+      "SimJava",
+      "GirlSim",
+      "CloudSim",
+      "User-Code"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 150,
+    "question": "Trong điện toán đám mây, IaaS có nghĩa là gì?",
+    "options": [
+      "Cơ sở hạ tầng như là dịch vụ",
+      "Nền tảng như là dịch vụ",
+      "Phần mềm như là dịch vụ",
+      "Giao tiếp như là dịch vụ"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 151,
+    "question": "Trong điện toán đám mây, SaaS có nghĩa là gì?",
+    "options": [
+      "Cơ sở hạ tầng như là dịch vụ",
+      "Nền tảng như là dịch vụ",
+      "Phần mềm như là dịch vụ",
+      "Giao tiếp như là dịch vụ"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 152,
+    "question": "Trong điện toán đám mây, PaaS có nghĩa là gì?",
+    "options": [
+      "Cơ sở hạ tầng như là dịch vụ",
+      "Nền tảng như là dịch vụ",
+      "Phần mềm như là dịch vụ",
+      "Giao tiếp như là dịch vụ"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 153,
+    "question": "Trong điện toán đám mây, CaaS có nghĩa là gì?",
+    "options": [
+      "Cơ sở hạ tầng như là dịch vụ",
+      "Nền tảng như là dịch vụ",
+      "Phần mềm như là dịch vụ",
+      "Giao tiếp như là dịch vụ"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 154,
+    "question": "Trong điện toán đám mây, NaaS có nghĩa là gì?",
+    "options": [
+      "Cơ sở hạ tầng như là dịch vụ",
+      "Mạng như là dịch vụ",
+      "Phần mềm như là dịch vụ",
+      "Giao tiếp như là dịch vụ"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 155,
+    "question": "Trong điện toán đám mây thuật ngữ Nền tảng như là dịch vụ được viết tắt là:",
+    "options": [
+      "IaaS",
+      "NaaS",
+      "PaaS",
+      "CaaS"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 156,
+    "question": "Trong điện toán đám mây thuật ngữ Mạng là dịch vụ được viết tắt là:",
+    "options": [
+      "IaaS",
+      "NaaS",
+      "PaaS",
+      "CaaS"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 157,
+    "question": "Trong điện toán đám mây thuật ngữ Phần mềm như là dịch vụ được viết tắt là:",
+    "options": [
+      "IaaS",
+      "NaaS",
+      "SaaS",
+      "CaaS"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 158,
+    "question": "Trong điện toán đám mây thuật ngữ Giao tiếp như là dịch vụ được viết tắt là:",
+    "options": [
+      "IaaS",
+      "NaaS",
+      "SaaS",
+      "CaaS"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 159,
+    "question": "Phương án nào sau đây cần được đàm phán trong thỏa thuận cấp độ dịch vụ?",
+    "options": [
+      "Ghi nhật ký",
+      "Kiểm toán",
+      "Tuân thủ quy định",
+      "Ghi nhật ký, kiểm toán và Tuân thủ quy định"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 160,
+    "question": "Chỉ ra phát biểu sai:",
+    "options": [
+      "Bạn có thể sử dụng proxy và dịch vụ môi giới để tách khách hàng khỏi quyền truy cập trực tiếp vào lưu trữ đám mây được chia sẻ",
+      "Bất kỳ ứng dụng phân tán nào có bề mặt tấn công lớn hơn nhiều so với ứng dụng được tổ chức chặt chẽ trên mạng cục bộ",
+      "Điện toán đám mây không có lỗ hổng nào liên quan đến các ứng dụng Internet",
+      "Điện toán đám mây mang đến những cơ hội mới cho người dùng và nhà phát triển"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 161,
+    "question": "Phương án nào sau đây không phải là đặc điểm chính của điện toán đám mây?",
+    "options": [
+      "Tính toàn vẹn dữ liệu cao",
+      "Nền tảng là một Dịch vụ",
+      "Phần mềm như một dịch vụ",
+      "Cơ sở hạ tầng như một dịch vụ"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 162,
+    "question": "Dịch vụ đám mây có mối quan hệ _____ với khách hàng của họ.",
+    "options": [
+      "Nhiều-nhiều",
+      "Một-nhiều",
+      "Một chọi một",
+      "Không có quan hệ"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 163,
+    "question": "Dịch vụ đám mây bao gồm:",
+    "options": [
+      "Nền tảng, phần mềm, cơ sở hạ tầng",
+      "Phần mềm, phần cứng, cơ sở hạ tầng",
+      "Nền tảng, phần cứng, cơ sở hạ tầng",
+      "Phần cứng, nền tảng, phần mềm"
+    ],
+    "correctAnswerIndex": 0
+  },
+  {
+    "id": 164,
+    "question": "Mạng LAN là mạng kết nối dùng trong phạm vi:",
+    "options": [
+      "Lớn",
+      "Vừa",
+      "Nhỏ",
+      "Trên toàn thế giới"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 165,
+    "question": "Mạng LAN là viết tắt của cụm từ nào?",
+    "options": [
+      "Local Arian Network",
+      "Lomal Area Network",
+      "Local Area (không đầy đủ)",
+      "Local Area Network"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 166,
+    "question": "Máy tính kết nối với nhau để:",
+    "options": [
+      "Chia sẻ các thiết bị",
+      "Tiết kiệm điện",
+      "Trao đổi dữ liệu",
+      "Chia sẻ các thiết bị và trao đổi dữ liệu"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 167,
+    "question": "Trường hợp nào không thích hợp để sử dụng mạng LAN?",
+    "options": [
+      "Tòa nhà",
+      "Cơ quan",
+      "Nhà riêng",
+      "Quận/huyện"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 168,
+    "question": "Phát biểu nào không chính xác?",
+    "options": [
+      "Mạng không dây thuận tiện cho những người di chuyển nhiều",
+      "Mạng không dây dễ dàng lắp đặt hơn vì không cần khoan đục và lắp đặt đường dây",
+      "Mạng không dây thường được sử dụng cho các thiết bị di động như máy tính bảng, điện thoại,...",
+      "Mạng không dây nhanh và ổn định hơn mạng có dây"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 169,
+    "question": "Đâu không phải là ưu điểm của mạng không dây?",
+    "options": [
+      "Kết nối nhanh chóng, tiện lợi, dễ dàng thêm thiết bị mới",
+      "Tín hiệu mạng ổn định, không bị ảnh hưởng bởi yếu tố thời tiết",
+      "Không cần dây cáp",
+      "Không hạn chế số lượng thiết bị kết nối"
+    ],
+    "correctAnswerIndex": 1
+  },
+  {
+    "id": 170,
+    "question": "Hơn 100 máy tính ở ba tầng liền nhau của một tòa nhà cao tầng, được nối với nhau bằng dây cáp mạng để chia sẻ dữ liệu và máy in. Các máy tính này dùng loại mạng nào?",
+    "options": [
+      "Mạng có dây",
+      "Mạng không dây",
+      "Mạng WAN và mạng LAN",
+      "Mạng LAN"
+    ],
+    "correctAnswerIndex": 3
+  },
+  {
+    "id": 171,
+    "question": "Virtual Machine Ware (VMware) thuộc loại dịch vụ gì?",
+    "options": [
+      "Dịch vụ phần mềm",
+      "Dịch vụ nền tảng",
+      "Dịch vụ cơ sở hạ tầng",
+      "Dịch vụ khác"
+    ],
+    "correctAnswerIndex": 2
+  },
+  {
+    "id": 172,
+    "question": "Đâu là phát biểu không chính xác?",
+    "options": [
+      "Mạng không dây nhanh và ổn định hơn mạng có dây",
+      "Mạng không dây dễ dàng lắp đặt hơn vì không cần khoan đục và lắp đặt đường dây",
+      "Mạng không dây thường được sử dụng cho các thiết bị di động như máy tính bảng, điện thoại,...",
+      "Mạng không dây thuận tiện cho những người di chuyển nhiều"
+    ],
+    "correctAnswerIndex": 0
+  }
+];
+
+        let activeQuestions = [];
+        let currentIdx = 0;
+        let userAnswers = []; // Array to store user's selected option index (relative to the activeQuestion options array)
+        let mode = 'test'; // 'test' or 'practice'
+        let timerInterval;
+        let timeRemaining = 0; // in seconds
+
+        // Initialize Theme
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDark) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.querySelector('.theme-toggle').innerHTML = '<i class="fa-solid fa-sun"></i>';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.querySelector('.theme-toggle').innerHTML = '<i class="fa-solid fa-moon"></i>';
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', target);
+            document.querySelector('.theme-toggle').innerHTML = target === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startQuiz() {
+            // Get settings
+            mode = document.getElementById('setting-mode').value;
+            const countVal = document.getElementById('setting-count').value;
+            const randQ = document.getElementById('setting-random-q').checked;
+            const randO = document.getElementById('setting-random-o').checked;
+
+            // Prepare questions
+            let questions = [...rawQuizData];
+            if (randQ) {
+                questions = shuffleArray(questions);
+            }
+            
+            const count = countVal === 'all' ? questions.length : parseInt(countVal);
+            activeQuestions = questions.slice(0, count);
+
+            // Scramble options if requested and preserve correct answer
+            activeQuestions = activeQuestions.map(q => {
+                let optionsData = q.options.map((opt, idx) => ({ text: opt, isCorrect: idx === q.correctAnswerIndex }));
+                if (randO) {
+                    optionsData = shuffleArray(optionsData);
+                }
+                return {
+                    id: q.id,
+                    question: q.question,
+                    options: optionsData.map(o => o.text),
+                    correctAnswerIndex: optionsData.findIndex(o => o.isCorrect)
+                };
+            });
+
+            userAnswers = new Array(activeQuestions.length).fill(null);
+            currentIdx = 0;
+
+            // Setup Timer for test mode
+            if (mode === 'test') {
+                document.getElementById('timer').style.display = 'block';
+                timeRemaining = count * 60; // 1 minute per question
+                updateTimerDisplay();
+                timerInterval = setInterval(timerTick, 1000);
+            } else {
+                document.getElementById('timer').style.display = 'none';
+            }
+
+            switchScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        function timerTick() {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+                updateTimerDisplay();
+            } else {
+                clearInterval(timerInterval);
+                alert("Hết giờ làm bài!");
+                finishQuiz();
+            }
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            const timerEl = document.getElementById('timer');
+            timerEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${m}:${s}`;
+            
+            if (timeRemaining <= 60) {
+                timerEl.classList.add('warning');
+            } else {
+                timerEl.classList.remove('warning');
+            }
+        }
+
+        function loadQuestion() {
+            const q = activeQuestions[currentIdx];
+            document.getElementById('question-tracker').innerText = `Câu ${currentIdx + 1} / ${activeQuestions.length}`;
+            document.getElementById('question-text').innerText = q.question;
+            
+            // Update progress bar
+            const progress = ((currentIdx) / activeQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = '';
+
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+            q.options.forEach((opt, idx) => {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'option';
+                
+                // If in practice mode and user already answered, show correct/wrong
+                let isAlreadyAnsweredInPractice = mode === 'practice' && userAnswers[currentIdx] !== null;
+
+                if (userAnswers[currentIdx] === idx) {
+                    optDiv.classList.add('selected');
+                    if (isAlreadyAnsweredInPractice) {
+                        if (idx === q.correctAnswerIndex) {
+                            optDiv.classList.add('correct');
+                        } else {
+                            optDiv.classList.add('wrong');
+                        }
+                    }
+                }
+
+                if (isAlreadyAnsweredInPractice && idx === q.correctAnswerIndex && userAnswers[currentIdx] !== idx) {
+                    optDiv.classList.add('correct');
+                }
+
+                optDiv.innerHTML = `
+                    <div class="option-letter">${letters[idx]}</div>
+                    <div class="option-text">${opt}</div>
+                `;
+
+                if (!isAlreadyAnsweredInPractice) {
+                    optDiv.onclick = () => selectOption(idx);
+                }
+                
+                optsContainer.appendChild(optDiv);
+            });
+
+            updateNavButtons();
+        }
+
+        function selectOption(idx) {
+            userAnswers[currentIdx] = idx;
+            
+            if (mode === 'practice') {
+                // Instantly show result and freeze options
+                loadQuestion(); 
+            } else {
+                // Just highlight selected
+                const opts = document.querySelectorAll('.option');
+                opts.forEach(o => o.classList.remove('selected'));
+                opts[idx].classList.add('selected');
+            }
+            updateNavButtons();
+        }
+
+        function updateNavButtons() {
+            document.getElementById('btn-prev').style.display = currentIdx > 0 ? 'inline-flex' : 'none';
+            
+            const btnSkip = document.getElementById('btn-skip');
+            const btnNext = document.getElementById('btn-next');
+            const btnFinish = document.getElementById('btn-finish');
+
+            if (currentIdx === activeQuestions.length - 1) {
+                btnSkip.style.display = 'none';
+                btnNext.style.display = 'none';
+                btnFinish.style.display = 'inline-flex';
+            } else {
+                btnFinish.style.display = 'none';
+                if (userAnswers[currentIdx] !== null) {
+                    btnSkip.style.display = 'none';
+                    btnNext.style.display = 'inline-flex';
+                } else {
+                    btnSkip.style.display = 'inline-flex';
+                    btnNext.style.display = 'none';
+                }
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIdx < activeQuestions.length - 1) {
+                currentIdx++;
+                loadQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                loadQuestion();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            let correct = 0;
+            let wrong = 0;
+            let skipped = 0;
+
+            userAnswers.forEach((ans, idx) => {
+                if (ans === null) skipped++;
+                else if (ans === activeQuestions[idx].correctAnswerIndex) correct++;
+                else wrong++;
+            });
+
+            document.getElementById('stat-correct').innerText = correct;
+            document.getElementById('stat-wrong').innerText = wrong;
+            document.getElementById('stat-skipped').innerText = skipped;
+
+            const percentage = Math.round((correct / activeQuestions.length) * 100);
+            document.getElementById('score-text').innerText = `${percentage}%`;
+            
+            const circle = document.getElementById('score-circle');
+            circle.style.background = `conic-gradient(var(--primary) ${percentage}%, var(--progress-bg) ${percentage}%)`;
+
+            let msg = '';
+            if (percentage >= 90) msg = 'Tuyệt vời! Kiến thức rất vững vàng.';
+            else if (percentage >= 70) msg = 'Rất tốt! Cố gắng thêm chút nữa nhé.';
+            else if (percentage >= 50) msg = 'Khá ổn, cần ôn tập thêm một số phần.';
+            else msg = 'Cần nỗ lực nhiều hơn, hãy xem lại lý thuyết!';
+            document.getElementById('score-msg').innerText = msg;
+
+            switchScreen('results-screen');
+            buildReviewList();
+        }
+
+        function buildReviewList() {
+            const list = document.getElementById('review-list');
+            list.innerHTML = '';
+
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+            activeQuestions.forEach((q, idx) => {
+                const uAns = userAnswers[idx];
+                const cAns = q.correctAnswerIndex;
+                const isCorrect = uAns === cAns;
+                const isSkipped = uAns === null;
+
+                const item = document.createElement('div');
+                item.className = `review-item ${isSkipped ? '' : (isCorrect ? 'correct' : 'wrong')}`;
+
+                let html = `
+                    <div class="review-q">Câu ${idx + 1}: ${q.question}</div>
+                `;
+
+                if (isSkipped) {
+                    html += `<div class="badge" style="background: var(--progress-bg);">Chưa làm</div>`;
+                } else if (isCorrect) {
+                    html += `<div class="badge badge-correct">Đúng</div>`;
+                } else {
+                    html += `<div class="badge badge-wrong">Sai</div>`;
+                }
+
+                html += `<div style="margin-top: 10px;">`;
+                html += `<div class="review-ans"><b>Đáp án đúng:</b> ${letters[cAns]}. ${q.options[cAns]}</div>`;
+                
+                if (!isCorrect && !isSkipped) {
+                    html += `<div class="review-ans" style="color: var(--wrong-border);"><b>Bạn chọn:</b> ${letters[uAns]}. ${q.options[uAns]}</div>`;
+                }
+                html += `</div>`;
+
+                item.innerHTML = html;
+                list.appendChild(item);
+            });
+        }
+
+        function showReview() { switchScreen('review-screen'); }
+        function showResults() { switchScreen('results-screen'); }
+
+        function showReadMode() {
+            const list = document.getElementById('read-list');
+            list.innerHTML = '';
+            
+            rawQuizData.forEach(q => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <div class="list-question">Câu ${q.id}: ${q.question}</div>
+                    <div class="list-answer"><i class="fa-solid fa-check"></i> ${q.options[q.correctAnswerIndex]}</div>
+                `;
+                list.appendChild(item);
+            });
+            document.getElementById('search-input').value = '';
+            switchScreen('read-screen');
+        }
+
+        function filterReadList() {
+            const term = document.getElementById('search-input').value.toLowerCase();
+            const items = document.querySelectorAll('#read-list .list-item');
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(term) ? 'block' : 'none';
+            });
+        }
+
+        function switchScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+    </script>
+</body>
+</html>
